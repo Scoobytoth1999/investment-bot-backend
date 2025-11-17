@@ -1,0 +1,9 @@
+{
+  "name": "investment-bot-backend",
+  "version": "1.0.0",
+  "description": "Backend proxy for Investment Club Bot",
+  "main": "api/chat.js",
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
+}
