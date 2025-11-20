@@ -1,7 +1,7 @@
 // Finnhub Stock Data API Endpoint
 // This endpoint fetches real stock data and returns it to the front-end
 
-const FINNHUB_API_KEY = 'd4fj4a9r01qufc4uqkjgd4fj4a9r01qufc4uqkk0';
+const FINNHUB_API_KEY = 'd4fj4a9r01qufc4uqkjgd4fj4a9r01qufc4uqkk0'; 
 
 export default async function handler(req, res) {
   // Enable CORS for all origins
