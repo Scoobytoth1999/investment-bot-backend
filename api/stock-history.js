@@ -1,7 +1,5 @@
 const fetch = require('node-fetch');
 
-const FINNHUB_API_KEY = 'd4fj4a9r01qufc4uqkjgd4fj4a9r01qufc4uqkk0';
-
 module.exports = async (req, res) => {
   // Enable CORS for all origins
   const origin = req.headers.origin || '*';
@@ -28,44 +26,54 @@ module.exports = async (req, res) => {
     }
 
     // Calculate date range
-    const to = Math.floor(Date.now() / 1000); // Current time in Unix
-    let from;
+    const now = Math.floor(Date.now() / 1000);
+    let period1;
     
     switch (range) {
       case '1M':
-        from = to - (30 * 24 * 60 * 60);
+        period1 = now - (30 * 24 * 60 * 60);
         break;
       case '3M':
-        from = to - (90 * 24 * 60 * 60);
+        period1 = now - (90 * 24 * 60 * 60);
         break;
       case '6M':
-        from = to - (180 * 24 * 60 * 60);
+        period1 = now - (180 * 24 * 60 * 60);
         break;
       case '1Y':
-        from = to - (365 * 24 * 60 * 60);
+        period1 = now - (365 * 24 * 60 * 60);
         break;
       case '5Y':
-        from = to - (5 * 365 * 24 * 60 * 60);
+        period1 = now - (5 * 365 * 24 * 60 * 60);
         break;
       default:
-        from = to - (365 * 24 * 60 * 60);
+        period1 = now - (365 * 24 * 60 * 60);
     }
 
-    // Fetch candle data from Finnhub
-    const finnhubUrl = `https://finnhub.io/api/v1/stock/candle?symbol=${symbol.toUpperCase()}&resolution=D&from=${from}&to=${to}&token=${FINNHUB_API_KEY}`;
+    // Fetch from Yahoo Finance API
+    const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol.toUpperCase()}?period1=${period1}&period2=${now}&interval=1d`;
     
-    const response = await fetch(finnhubUrl);
+    const response = await fetch(yahooUrl);
     const data = await response.json();
 
-    // Return the raw response for debugging
+    if (!response.ok || data.chart.error) {
+      return res.status(404).json({ 
+        error: 'No historical data found for this symbol',
+        details: data.chart?.error
+      });
+    }
+
+    // Extract the data
+    const result = data.chart.result[0];
+    const timestamps = result.timestamp;
+    const prices = result.indicators.quote[0].close;
+
+    // Format response similar to Finnhub
     return res.status(200).json({
-      debug: true,
-      requestedSymbol: symbol,
-      requestedRange: range,
-      from: from,
-      to: to,
-      url: finnhubUrl.replace(FINNHUB_API_KEY, 'API_KEY_HIDDEN'),
-      finnhubResponse: data
+      s: 'ok',
+      t: timestamps,
+      c: prices,
+      symbol: symbol.toUpperCase(),
+      range: range
     });
 
   } catch (error) {
