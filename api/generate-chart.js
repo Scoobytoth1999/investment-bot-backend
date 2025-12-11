@@ -192,6 +192,14 @@ async function fetchStockData(symbol, range) {
     
     const timestamps = result.timestamp;
     const prices = result.indicators.quote[0].close;
+    // Count how many valid prices we have
+   const validPrices = prices.filter(p => p !== null && p !== undefined && !isNaN(p));
+   console.log(`${symbol}: Total prices: ${prices.length}, Valid prices: ${validPrices.length}`);
+   
+   // If we have mostly invalid data, there's a problem
+   if (validPrices.length < prices.length * 0.5) {
+     console.error(`WARNING: ${symbol} has ${prices.length - validPrices.length} null prices out of ${prices.length}`);
+   }
     const highs = result.indicators.quote[0].high;
     const lows = result.indicators.quote[0].low;
     const opens = result.indicators.quote[0].open;
