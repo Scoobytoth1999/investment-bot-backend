@@ -294,9 +294,9 @@ function createChartConfig(stockData, range) {
     if (stock.data.length === 0) return {};
     
     const chartData = stock.data.map(point => ({
-      x: point.date.toISOString(),
-      y: point.price
-    }));
+    x: point.date.toISOString().split('T')[0],  // Use date only, no time
+    y: parseFloat(point.price)  // Ensure it's a number
+}));
 
     // Calculate min and max for better scaling
     const prices = stock.data.map(d => d.price);
