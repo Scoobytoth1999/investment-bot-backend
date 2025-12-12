@@ -461,15 +461,7 @@ function createChartConfig(stockData, range) {
             color: 'rgba(0, 0, 0, 0.08)',
             drawTicks: true
           },
-          // Add suggested min/max for single stock charts for better scaling
-          ...(isComparison ? {} : {
-            suggestedMin: stockData[0].data.length > 0 ? 
-              Math.min(...stockData[0].data.map(d => d.price)) - 
-              (Math.max(...stockData[0].data.map(d => d.price)) - Math.min(...stockData[0].data.map(d => d.price))) * 0.05 : undefined,
-            suggestedMax: stockData[0].data.length > 0 ? 
-              Math.max(...stockData[0].data.map(d => d.price)) + 
-              (Math.max(...stockData[0].data.map(d => d.price)) - Math.min(...stockData[0].data.map(d => d.price))) * 0.05 : undefined
-          })
+         beginAtZero: false
         }
       },
       interaction: {
